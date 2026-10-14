@@ -347,7 +347,9 @@ class _TodoListScreenState extends State<TodoListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+  backgroundColor: const Color(0xFFF7F8FC),
+  appBar: AppBar(
+    backgroundColor: const Color(0xFFF7F8FC),
         toolbarHeight: 90,
         title: Padding(
           padding: const EdgeInsets.only(top: 15),
@@ -411,36 +413,63 @@ class _TodoListScreenState extends State<TodoListScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (todoArray.isNotEmpty)
-                Container(
-                  margin: const EdgeInsets.fromLTRB(24, 4, 28, 12),
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE0E5FF),
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              
+            if (todoArray.isNotEmpty)
+              Container(
+                margin: const EdgeInsets.fromLTRB(24, 4, 28, 12),
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                color: const Color(0xFFE8EDFF),
+                borderRadius: BorderRadius.circular(18),
+              ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
                         'Your progress',
                         style: TextStyle(
                           fontSize: 18,
+                          fontWeight: FontWeight.w600,
                           color: Color(0xFF174A8B),
+                          letterSpacing: 0.2,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '$completedCount of ${todoArray.length} tasks completed',
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF174A8B),
-                        ),
+                      const Icon(
+                        Icons.task_alt_rounded,
+                        size: 26,
+                        color: Color(0xFF25845D),
                       ),
                     ],
                   ),
+                    const SizedBox(height: 12),
+                    Text(
+                      '$completedCount of ${todoArray.length} tasks completed',
+                      style: const TextStyle(
+                        fontSize: 20, // Reduced from 22 to 20
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF21966A), // Green
+                        letterSpacing: 0.1,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: LinearProgressIndicator(
+                        value: completedCount / todoArray.length,
+                        minHeight: 10,
+                        backgroundColor: const Color(0xFFD3DCF4),
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                          Color(0xFF25845D),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
+              ),
+
               if (todoArray.isEmpty)
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.55,
@@ -453,9 +482,9 @@ class _TodoListScreenState extends State<TodoListScreen> {
                           height: 100,
                           alignment: Alignment.center,
                           decoration: const BoxDecoration(
-                            color: Color(0xFFE0E5FF),
-                            shape: BoxShape.circle,
-                          ),
+                          color: Color(0xFFE8EDFF),
+                          shape: BoxShape.circle,
+                        ),  
                           child: const Icon(
                             Icons.auto_awesome_rounded,
                             size: 46,
@@ -523,10 +552,18 @@ class _TodoListScreenState extends State<TodoListScreen> {
       floatingActionButton: Transform.translate(
         offset: const Offset(0, -15),
         child: FloatingActionButton.extended(
-          onPressed: createTodo,
-          icon: const Icon(Icons.add),
-          label: const Text('Add Task'),
+        onPressed: createTodo,
+        backgroundColor: const Color(0xFFDCE3FF),
+        foregroundColor: const Color(0xFF39477D),
+        elevation: 5,
+        icon: const Icon(Icons.add),
+        label: const Text(
+          'Add Task',
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+          ),
         ),
+      ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );

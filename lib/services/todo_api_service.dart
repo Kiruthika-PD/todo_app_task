@@ -1,65 +1,61 @@
-
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import '../models/todo_model.dart';
 
 class TodoApiService {
-  String baseUrl = 'http://192.168.1.85:5001';
+  final String baseUrl = 'http://64.227.163.157:5003';
+
+  final Dio dio = Dio();
 
   Future<List<TodoModel>> getTodoArray() async {
-    http.Response response = await http.get(
-      Uri.parse('$baseUrl/todos'),
-    );
+    try {
+      final response = await dio.get('$baseUrl/todos');
 
-    if (response.statusCode != 200) {
-      throw Exception('Failed to load tasks');
+      final List<dynamic> todoJsonArray = response.data;
+
+      return todoJsonArray
+          .map((todoJson) => TodoModel.fromJson(todoJson))
+          .toList();
+    } on DioException catch (e) {
+      throw Exception('Failed to load tasks: ${e.message}');
     }
-
-    List<dynamic> todoJsonArray = jsonDecode(response.body);
-
-    return todoJsonArray
-        .map((todoJson) => TodoModel.fromJson(todoJson))
-        .toList();
   }
 
-  Future<TodoModel> createTodo(Map<String, dynamic> todoData) async {
-    http.Response response = await http.post(
-      Uri.parse('$baseUrl/todos'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(todoData),
-    );
+  Future<TodoModel> createTodo(
+    Map<String, dynamic> todoData,
+  ) async {
+    try {
+      final response = await dio.post(
+        '$baseUrl/todos',
+        data: todoData,
+      );
 
-    if (response.statusCode != 201 && response.statusCode != 200) {
-      throw Exception('Failed to create task: ${response.body}');
+      return TodoModel.fromJson(response.data);
+    } on DioException catch (e) {
+      throw Exception('Failed to create task: ${e.message}');
     }
-
-    return TodoModel.fromJson(jsonDecode(response.body));
   }
 
   Future<TodoModel> updateTodo(
     String todoId,
     Map<String, dynamic> todoData,
   ) async {
-    http.Response response = await http.patch(
-      Uri.parse('$baseUrl/todos/$todoId'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(todoData),
-    );
+    try {
+      final response = await dio.patch(
+        '$baseUrl/todos/$todoId',
+        data: todoData,
+      );
 
-    if (response.statusCode != 200) {
-      throw Exception('Failed to update task: ${response.body}');
+      return TodoModel.fromJson(response.data);
+    } on DioException catch (e) {
+      throw Exception('Failed to update task: ${e.message}');
     }
-
-    return TodoModel.fromJson(jsonDecode(response.body));
   }
 
   Future<void> deleteTodo(String todoId) async {
-    http.Response response = await http.delete(
-      Uri.parse('$baseUrl/todos/$todoId'),
-    );
-
-    if (response.statusCode != 200 && response.statusCode != 204) {
-      throw Exception('Failed to delete task: ${response.body}');
+    try {
+      await dio.delete('$baseUrl/todos/$todoId');
+    } on DioException catch (e) {
+      throw Exception('Failed to delete task: ${e.message}');
     }
   }
 }
